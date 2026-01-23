@@ -1,4 +1,5 @@
 [workspace]
 
-merbers = ["webservice"]
 members = ["webservice"]
+
+resolver = "3"

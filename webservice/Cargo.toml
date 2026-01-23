@@ -2,11 +2,16 @@
 name = "webservice"
 version = "0.1.0"
 edition = "2024"
+default-run = "teacher-service"
 
 [dependencies]
 actix-web = "4.3.2"
 actix-rt = "2.3.2"
+serde = {version = "1.0.128", features = ["derive"]}
+chrono = {version = "0.4.19", features = ["serde"]}
 
 [[bin]]
 name = "server1"
 
+[[bin]]
+name = "teacher-service"
