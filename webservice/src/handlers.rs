@@ -38,6 +38,51 @@ pub async fn new_course(
     HttpResponse::Ok().json("Course added successfully")
 }
 
+pub async fn get_courses_for_teacher (
+    app_state: web::Data<AppState>,
+    params: web::Path<(usize)>
+) -> HttpResponse {
+    let teacher_id = params.into_inner();
+
+    let filtered_courses = app_state
+        .courses
+        .lock()
+        .unwrap()
+        .clone()
+        .into_iter()
+        .filter(|course| course.teacher_id == teacher_id)
+        .collect::<Vec<Course>>();
+
+    if filtered_courses.len() > 0{
+        HttpResponse::Ok().json(filtered_courses)
+    } else {
+        HttpResponse::Ok().json("No courses found".to_string())
+    }
+}
+
+pub async fn get_course_detail(
+    app_state: web::Data<AppState>,
+    params: web::Path<(usize, usize)>
+) -> HttpResponse {
+    let (teacher_id, course_id) = params.into_inner();
+
+    let filtered_course = app_state
+        .courses
+        .lock()
+        .unwrap()
+        .clone()
+        .into_iter()
+        .find(|x| x.teacher_id == teacher_id && x.id == Some(course_id))
+        .ok_or("Course not found");
+
+    if let Ok(course) = filtered_course {
+        HttpResponse::Ok().json(course)
+    } else {
+        HttpResponse::Ok().json("Course not found".to_string())
+    }
+}
+
+
 use actix_web;
 
 #[actix_rt::test]
@@ -59,6 +104,33 @@ async fn post_course_test() {
         courses: Mutex::new(vec![]),
     });
     let resp = new_course(course, app_state).await;
+    assert_eq!(resp.status(), StatusCode::OK);
+}
+
+#[actix_rt::test]
+async fn get_all_courses_success() {
+    use std::sync::Mutex;
+    use actix_web::{http::StatusCode};
+    let app_state: web::Data<AppState> = web::Data::new(AppState {
+        health_check_response: "".to_string(),
+        visit_count: Mutex::new(0),
+        courses: Mutex::new(vec![]),
+    });
+    let resp = get_courses_for_teacher(app_state, web::Path::from(1)).await;
+    assert_eq!(resp.status(), StatusCode::OK);
+}
+
+#[actix_rt::test]
+async fn get_one_course_success() {
+    use std::sync::Mutex;
+    use actix_web::{http::StatusCode};
+    let app_state: web::Data<AppState> = web::Data::new(AppState {
+        health_check_response: "".to_string(),
+        visit_count: Mutex::new(0),
+        courses: Mutex::new(vec![]),
+    });
+    let params: web::Path<(usize, usize)> = web::Path::from((1, 1));
+    let resp = get_course_detail(app_state, params).await;
     assert_eq!(resp.status(), StatusCode::OK);
 }
 
