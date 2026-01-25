@@ -1,5 +1,5 @@
 use super::state::AppState;
-use actix_web::{HttpResponse, http::StatusCode, web};
+use actix_web::{HttpResponse, web};
 
 pub async fn health_check_handler (
     app_state: web::Data<AppState>
@@ -51,6 +51,7 @@ async fn post_course_test() {
         }
     );
     use std::sync::Mutex;
+    use actix_web::{http::StatusCode};
 
     let app_state: web::Data<AppState> = web::Data::new(AppState {
         health_check_response: "".to_string(),
