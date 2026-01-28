@@ -1,6 +1,6 @@
 use actix_web::{web, App, HttpServer};
 use sqlx::database;
-use std::io;
+use std::{io, path};
 use std::sync::Mutex;
 use dotenv::dotenv;
 use std::env;
@@ -17,6 +17,9 @@ mod models;
 
 #[path = "../db_access.rs"]
 mod db_access;
+
+#[path = "../errors.rs"]
+mod errors;
 
 use handlers::*;
 use routers::*;

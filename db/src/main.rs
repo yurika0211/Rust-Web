@@ -1,6 +1,5 @@
 use chrono::NaiveDateTime;
 use dotenv::dotenv;
-use sqlx::database;
 use sqlx::postgres::PgPoolOptions;
 use std::env;
 use std::io;

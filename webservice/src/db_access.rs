@@ -1,17 +1,16 @@
 use super::models::*;
 use chrono::NaiveDateTime;
 use sqlx::postgres::PgPool;
-
-pub async fn get_courses_for_teacher_db(pool: &PgPool, teacher_id: i32)-> Vec<Course> {
+use super::errors::MyError;
+pub async fn get_courses_for_teacher_db(pool: &PgPool, teacher_id: i32)-> Result<Vec<Course>, MyError> {
     let rows = sqlx::query!(
         r#"SELECT id, teacher_id, name, time FROM course WHERE teacher_id = $1"#,
         teacher_id
     )
     .fetch_all(pool)
-    .await
-    .unwrap();
+    .await?;
 
-    rows.iter()
+    let courses:Vec<Course> = rows.iter()
         .map(
             |r| Course{
                 id: Some(r.id),
@@ -19,29 +18,36 @@ pub async fn get_courses_for_teacher_db(pool: &PgPool, teacher_id: i32)-> Vec<Co
                 name: r.name.clone(),
                 time: r.time.map(|t| NaiveDateTime::from(t)),
             }
-        ).collect::<Vec<Course>>()
+        ).collect();
+    
+    match courses.len() {
+        0 =>Err(MyError::NotFound("Courses not found for teacher".into())),
+        _ => Ok(courses),
+    }
 }
 
-pub async fn get_all_courses_details_db(pool: &PgPool, teacher_id: i32, course_id :i32) -> Course {
+pub async fn get_all_courses_details_db(pool: &PgPool, teacher_id: i32, course_id :i32) -> Result<Course, MyError> {
     let row = sqlx::query!(
         r#"SELECT id, teacher_id, name, time FROM course where teacher_id = $1 and id = $2"#,
         teacher_id,
         course_id
     )
     .fetch_one(pool)
-    .await
-    .unwrap();
+    .await;
 
-    Course{
+    if let Ok(row) = row {
+        Ok(Course{
         id: Some(row.id),
         teacher_id: row.teacher_id,
         name: row.name,
         time: Some(NaiveDateTime::from(row.time.unwrap())),
+        })
+    } else {
+        Err(MyError::NotFound("Course not found".into()))
     }
-    
 }
 
-pub async fn post_new_course_db(pool: &PgPool, new_course: Course) -> Course { 
+pub async fn post_new_course_db(pool: &PgPool, new_course: Course) -> Result<Course, MyError> { 
     let row = sqlx::query!(
         r#"insert into course (id, teacher_id, name) values ($1, $2, $3) returning id, teacher_id, name"#,
             new_course.id,
@@ -50,13 +56,8 @@ pub async fn post_new_course_db(pool: &PgPool, new_course: Course) -> Course {
     )
     .fetch_one(pool)
     .await
-    .unwrap();
+    .iter().collect();
     
-    Course {
-        id: Some(row.id),
-        teacher_id: row.teacher_id,
-        name: row.name.clone(),
-        time: None,
-    }
+
 }
 
