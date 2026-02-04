@@ -1,27 +1,25 @@
 use actix_web::{web, App, HttpServer};
-use sqlx::database;
-use std::{io, path};
 use std::sync::Mutex;
 use dotenv::dotenv;
 use std::env;
 use sqlx::postgres::PgPool;
+use std::io;
 
-#[path = "../handlers.rs"]
+#[path = "../handlers/mod.rs"]
 mod handlers;
 #[path = "../routers.rs"]
 mod routers;
 #[path = "../state.rs"]
 mod state;
-#[path = "../models.rs"]
+#[path = "../models/mod.rs"]
 mod models;
 
-#[path = "../db_access.rs"]
+#[path = "../dbaccess/mod.rs"]
 mod db_access;
 
 #[path = "../errors.rs"]
 mod errors;
 
-use handlers::*;
 use routers::*;
 use state::AppState;
 

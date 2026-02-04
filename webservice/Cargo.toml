@@ -13,8 +13,15 @@ dotenv = "0.15.0"
 openssl = {version ="0.10.30", features = ["vendored"]}
 sqlx = {version = "0.8.6", features = ["runtime-tokio-rustls", "postgres", "macros", "chrono",]}
 
-[[bin]]
-name = "server1"
+[dev-dependencies]
+actix-web = "4.3.2"
+actix-rt = "2.3.2"
+serde = {version = "1.0.128", features = ["derive"]}
+chrono = {version = "0.4.19", features = ["serde"]}
+dotenv = "0.15.0"
+openssl = {version ="0.10.30", features = ["vendored"]}
+sqlx = {version = "0.8.6", features = ["runtime-tokio-rustls", "postgres", "macros", "chrono",]}
+
 
 [[bin]]
 name = "teacher-service"
