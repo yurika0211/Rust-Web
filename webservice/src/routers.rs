@@ -26,10 +26,10 @@ pub fn teacher_routes(cfg: &mut web::ServiceConfig) {
     cfg
     .service(web::scope("/teachers")
     .route("/", web::post().to(post_new_teacher))
-    // .route("/{teacher_id}", web::get().to(get_teacher_detail))
-    // .route("/{teacher_id}", web::put().to(update_teacher_details))
+    .route("/{teacher_id}", web::get().to(get_teacher_detail))
+    .route("/{teacher_id}", web::put().to(update_teacher_details))
     .route("/{teacher_id}", web::delete().to(delete_teacher))
-    // .route("/", web::get().to(get_all_teachers))
+    .route("/", web::get().to(get_all_teachers))
 );
 
 }
