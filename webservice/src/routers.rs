@@ -1,7 +1,7 @@
 use actix_web::web;
 use crate::handlers::course::*;
 use crate::handlers::general::*;
-
+use crate::handlers::teacher::*;
 // 健康检查的路由配置
 pub fn general_routes(cfg: &mut web::ServiceConfig) {
     cfg
@@ -13,7 +13,7 @@ pub fn general_routes(cfg: &mut web::ServiceConfig) {
 pub fn course_routes(cfg: &mut web::ServiceConfig) {
     cfg
     .service(web::scope("/courses")
-    .route("/", web::post().to(new_course))
+    .route("/", web::post().to(post_new_course))
     .route("/{teacher_id}", web::get().to(get_courses_for_teacher))
     .route("/{teacher_id}/{course_id}", web::get().to(get_course_detail))
     .route("/{teacher_id}/{course_id}", web::put().to(update_course_details))
@@ -21,3 +21,15 @@ pub fn course_routes(cfg: &mut web::ServiceConfig) {
 );
 }
 
+// 教师管理系统的路由配置
+pub fn teacher_routes(cfg: &mut web::ServiceConfig) {
+    cfg
+    .service(web::scope("/teachers")
+    .route("/", web::post().to(post_new_teacher))
+    // .route("/{teacher_id}", web::get().to(get_teacher_detail))
+    // .route("/{teacher_id}", web::put().to(update_teacher_details))
+    .route("/{teacher_id}", web::delete().to(delete_teacher))
+    // .route("/", web::get().to(get_all_teachers))
+);
+
+}

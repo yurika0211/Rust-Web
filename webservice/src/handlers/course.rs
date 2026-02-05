@@ -5,7 +5,7 @@ use crate::db_access::course::*;
 use crate::errors::MyError;
 
 // 新建课程的处理逻辑
-pub async fn new_course(
+pub async fn post_new_course(
     new_course: web::Json<CreateCourse>,
     app_state: web::Data<AppState>
 ) -> Result<HttpResponse, MyError> {
@@ -107,7 +107,7 @@ async fn post_course_test() {
             level: Some("Test course level".into()),
         }
     );
-    let resp = new_course(course, app_state).await.unwrap();
+    let resp = post_new_course(course, app_state).await.unwrap();
     assert_eq!(resp.status(), StatusCode::OK);
 }
 

@@ -13,10 +13,8 @@ mod routers;
 mod state;
 #[path = "../models/mod.rs"]
 mod models;
-
 #[path = "../dbaccess/mod.rs"]
 mod db_access;
-
 #[path = "../errors.rs"]
 mod errors;
 
